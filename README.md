@@ -38,3 +38,5 @@ To better contend with Green Code guidelines, here are some possible improvement
 - Ligthen the resources used (lightweight image formats, use libraries to minify JavaScript/JSON files...)
 
 - Use a Cloud-hosted Database (like Atlas for MongoDB, instead of having an instance run on the server)
+
+- Use retroactive and user device-friendly libraries, functions and modules

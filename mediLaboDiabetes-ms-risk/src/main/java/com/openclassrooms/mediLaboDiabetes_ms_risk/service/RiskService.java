@@ -26,6 +26,9 @@ public class RiskService {
         setupSymptomsList();
     }
 
+    /** 
+     * Creates every RuleSets used to determine the Risk Level a Patient falls into. A RuleSet is a filter that, if respected, will dispense its 'RiskLevel'. A RuleSet has several parameters: a gender, a min/max age, and a min/max number of symptoms.
+     */
     private void setupRuleSets() {
         ruleSets.add(new RiskRuleSet(0, "", -1, -1, -1, 2));
 
@@ -40,6 +43,9 @@ public class RiskService {
         ruleSets.add(new RiskRuleSet(3, "F", 0, ageThreshold, 7, -1));
     }
 
+    /**
+     * Creates the list of every symptom to look for
+     */
     private void setupSymptomsList() {
         listSymptoms = new ArrayList<>();
         listSymptoms.add("Hémoglobine A1C");
@@ -56,6 +62,11 @@ public class RiskService {
         listSymptoms.add("Anticorps");
     }
 
+    /**
+     * Parses a patient's notes to find every unique occurrence of a symptom
+     * @param listNotes The List containing every note's content
+     * @return How many symptoms were found
+     */
     public int getNumberOfSymptoms(List<String> listNotes) {
         Set<String> foundSymptoms = new HashSet<>();
 
@@ -69,6 +80,13 @@ public class RiskService {
         return foundSymptoms.size();
     }
 
+    /**
+     * Using every ruleset defined earlier, tests each of them with the patient's data (number of symptoms found, their age and gender.)
+     * @param numSymptoms Number of symptoms detected
+     * @param age Age of the patient
+     * @param gender Gender of the patient
+     * @return The Risk Level (0-3) if at least one RuleSet is valid, -1 otherwise
+     */
     public int getRiskLevel(int numSymptoms, int age, String gender) {
         int riskLevel = -1;
         for (RiskRuleSet ruleSet : ruleSets) {

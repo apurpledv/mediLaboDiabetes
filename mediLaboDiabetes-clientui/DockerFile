@@ -1,0 +1,8 @@
+FROM eclipse-temurin:17-jdk-jammy AS build
+COPY . .
+RUN ./mvnw -B package -DskipTests
+
+FROM eclipse-temurin:17-jre-jammy
+COPY --from=build target/*.jar clientui-1.0.0.jar
+EXPOSE 9002
+ENTRYPOINT ["java", "-jar", "clientui-1.0.0.jar"]

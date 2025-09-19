@@ -1,0 +1,180 @@
+services:
+  config:
+    container_name: config-server
+    build:
+      context: config-server
+      dockerfile: Dockerfile
+    image: config-server:latest
+    ports:
+      - '9101:9101'
+    healthcheck:
+      test: ["CMD", "curl", "http://config:9101/"]
+      interval: 10s
+      retries: 5
+      start_period: 10s
+      timeout: 10s
+
+  eureka:
+    container_name: eureka-server
+    build:
+      context: eureka-server
+      dockerfile: Dockerfile
+    image: eureka-server:latest
+    ports:
+      - '9102:9102'
+    environment:
+      SPRING_CLOUD_CONFIG_URI: http://config:9101
+    healthcheck:
+      test: ["CMD", "curl", "http://eureka:9102/"]
+      interval: 10s
+      retries: 5
+      start_period: 10s
+      timeout: 10s
+    depends_on:
+      config:
+        condition: service_healthy
+
+  mediLaboDiabetes-api-gateway:
+    container_name: mediLaboDiabetes-api-gateway
+    build:
+      context: mediLaboDiabetes-api-gateway
+      dockerfile: Dockerfile
+    image: api-gateway:latest
+    ports:
+      - '9001:9001'
+    environment:
+      SPRING_CLOUD_CONFIG_URI: http://config:9101
+      EUREKA_URI: http://eureka:9102/eureka/
+      GATEWAY_ID: mediLaboDiabetes-api-gateway
+      GATEWAY_URI: http://mediLaboDiabetes-api-gateway:9001
+    healthcheck:
+      test: ["CMD", "curl", "http://mediLaboDiabetes-api-gateway:9001/"]
+      interval: 10s
+      retries: 5
+      start_period: 10s
+      timeout: 10s
+    depends_on:
+      config:
+        condition: service_healthy
+      eureka:
+        condition: service_healthy
+
+  mediLaboDiabetes-ms-patient:
+    container_name: mediLaboDiabetes-ms-patient
+    build:
+      context: mediLaboDiabetes-ms-patient
+      dockerfile: Dockerfile
+    image: ms-patient:latest
+    ports:
+      - '9003:9003'
+    environment:
+      SPRING_CLOUD_CONFIG_URI: http://config:9101
+      EUREKA_URI: http://eureka:9102/eureka/
+      MYSQL_HOST: db_patient:3306
+      MYSQL_USER: root
+      MYSQL_PASSWORD: rootroot
+    healthcheck:
+      test: ["CMD", "curl", "http://mediLaboDiabetes-ms-patient:9003/"]
+      interval: 10s
+      retries: 5
+      start_period: 10s
+      timeout: 10s
+    depends_on:
+      config:
+        condition: service_healthy
+      eureka:
+        condition: service_healthy
+      mediLaboDiabetes-api-gateway:
+        condition: service_healthy
+  
+  mediLaboDiabetes-ms-risk:
+    container_name: mediLaboDiabetes-ms-risk
+    build:
+      context: mediLaboDiabetes-ms-risk
+      dockerfile: Dockerfile
+    image: ms-risk:latest
+    ports:
+      - '9005:9005'
+    environment:
+      SPRING_CLOUD_CONFIG_URI: http://config:9101
+      EUREKA_URI: http://eureka:9102/eureka/
+    depends_on:
+      config:
+        condition: service_healthy
+      eureka:
+        condition: service_healthy
+      mediLaboDiabetes-api-gateway:
+        condition: service_healthy
+
+  db_patient:
+    image: mysql:latest
+    container_name: db_patient
+    ports:
+      - "3307:3306"
+    environment:
+      MYSQL_ROOT_PASSWORD: rootroot
+      MYSQL_PASSWORD: root
+    volumes:
+      - .docker/scripts/db_patient.sql:/docker-entrypoint-initdb.d/db_patient.sql
+      - db_data:/var/lib/mysql
+
+  mediLaboDiabetes-ms-notes:
+    container_name: mediLaboDiabetes-ms-notes
+    build:
+      context: mediLaboDiabetes-ms-notes
+      dockerfile: Dockerfile
+    image: ms-notes:latest
+    ports:
+      - '9004:9004'
+    environment:
+      SPRING_CLOUD_CONFIG_URI: http://config:9101
+      EUREKA_URI: http://eureka:9102/eureka/
+      MONGO_HOST: db_notes
+    depends_on:
+      config:
+        condition: service_healthy
+      eureka:
+        condition: service_healthy
+      mediLaboDiabetes-api-gateway:
+        condition: service_healthy
+
+  db_notes:
+    image: mongo:latest
+    container_name: db_notes
+    restart: always
+    hostname: db_notes
+    ports:
+      - "27017:27017"
+    environment:
+      MONGO_INITDB_DATABASE: db_notes
+    volumes:
+      - .docker/scripts/notes-init.js:/docker-entrypoint-initdb.d/notes-init.js:ro
+      - mongodb-data:/data/db/
+
+  clientui:
+    container_name: clientui
+    build:
+      context: clientui
+      dockerfile: Dockerfile
+    image: clientui:latest
+    ports:
+      - '9002:9002'
+    environment:
+      SPRING_CLOUD_CONFIG_URI: http://config:9101
+      EUREKA_URI: http://eureka:9102/eureka/
+    depends_on:
+      config:
+        condition: service_healthy
+      eureka:
+        condition: service_healthy
+      mediLaboDiabetes-api-gateway:
+        condition: service_healthy
+      mediLaboDiabetes-ms-patient:
+        condition: service_healthy
+
+volumes:
+  db_data:
+  
+  mongodb-data:
+    driver: local
+    name: mongo-data

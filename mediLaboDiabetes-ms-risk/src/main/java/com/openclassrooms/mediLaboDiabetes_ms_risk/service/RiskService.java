@@ -100,6 +100,12 @@ public class RiskService {
         return riskLevel;
     }
 
+    /**
+     * Parses a patient's data to find their age (from their birthdate) and their gender; makes a DTO out of it for easier use
+     * @param patient the patient data
+     * @param notesDTO the notes DTOs (containing [id, noteContent])
+     * @return a DTO containing [id, age, gender, noteStrings]
+     */
     public RiskPatientDTO createRiskPatientDTO(PatientBean patient, List<NoteBeanDTO> notesDTO) {
         int id = patient.getId();
         int age = Period.between(

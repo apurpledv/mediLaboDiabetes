@@ -19,6 +19,9 @@ import com.openclassrooms.mediLaboDiabetes_clientui.proxies.MSRiskProxy;
 import feign.FeignException;
 import lombok.extern.slf4j.Slf4j;
 
+/**
+ * PatientsController is a class that handles FrontEnd for everything related to Patients (adding, updating or visualizing)
+ */
 @Slf4j
 @Controller
 public class PatientsController {
@@ -31,14 +34,26 @@ public class PatientsController {
     @Autowired
     MSRiskProxy riskProxy;
 
-    @GetMapping("/patients")
-    public String patientsView(Model model) {
-        List<PatientBean> patientsList = patientProxy.getPatients();
+    /**
+     * Lists every patient found within the db
+     * @param model
+     * @return the "patients/patients-list" template
+     */
+    @GetMapping("/patients/{page}")
+    public String patientsView(@PathVariable("page") int page, Model model) {
+        List<PatientBean> patientsList = patientProxy.getPatients(page);
         model.addAttribute("patientsList", patientsList);
+        model.addAttribute("prevPatPage", Math.max(0, page - 1));
+        model.addAttribute("nextPatPage", page + 1);
 
         return "patients/patients-list";
     }
 
+    /**
+     * Displays a form to add a new patient
+     * @param model
+     * @return the "patients/patients-add" template
+     */
     @GetMapping("/patients/add")
     public String patientsAddView(Model model) {
         model.addAttribute("addedPatient", new PatientBean());
@@ -46,6 +61,12 @@ public class PatientsController {
         return "patients/patients-add";
     }
 
+    /**
+     * Executes the 'add a new patient' request
+     * @param addedPatient the new patient to add
+     * @param model
+     * @return a redirection towards the list of patients page
+     */
     @PostMapping("/patients/add")
     public String patientsAddPost(@ModelAttribute PatientBean addedPatient, Model model) {
         patientProxy.savePatient(addedPatient);
@@ -53,6 +74,12 @@ public class PatientsController {
         return "redirect:/patients";
     }
 
+    /**
+     * Displays a form to update a given patient, as well as shows every note of a patient and their risk level
+     * @param id id of the patient
+     * @param model
+     * @return the "patients/patients-infos" template
+     */
     @GetMapping("/patients/infos/{id}")
     public String patientsUpdateView(@PathVariable int id, Model model) {
         PatientBean placeholderPatient = patientProxy.getPatient(id);
@@ -87,6 +114,13 @@ public class PatientsController {
         return "patients/patients-infos";
     }
     
+    /**
+     * Executes the 'update a patient's data' request
+     * @param id id of the patient to modify
+     * @param updatedPatient the new patient data
+     * @param model
+     * @return a redirection towards the list of patients
+     */
     @PostMapping("/patients/update/{id}")
     public String patientsUpdatePost(@PathVariable int id, @ModelAttribute("updatedPatient") PatientBean updatedPatient, Model model) {
         patientProxy.updatePatient(id, updatedPatient);

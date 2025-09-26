@@ -5,6 +5,9 @@ import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 
+/**
+ * MSRiskProxy is a class that sends HTTP requests to interact with MS-Risk
+ */
 @FeignClient(name="mediLaboDiabetes-api-gateway", contextId="ms-risk")
 @RibbonClient(name="mediLaboDiabetes-ms-risk")
 public interface MSRiskProxy {

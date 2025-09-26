@@ -93,6 +93,12 @@ section {
     cursor: pointer;
 }
 
+.patientNav img {
+    margin: 10px;
+    width: 40px;
+    height: 40px;
+}
+
 article {
     width: 90%;
 }

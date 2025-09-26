@@ -10,6 +10,9 @@ import com.openclassrooms.mediLaboDiabetes_ms_risk.proxies.MSNoteProxy;
 import com.openclassrooms.mediLaboDiabetes_ms_risk.proxies.MSPatientProxy;
 import com.openclassrooms.mediLaboDiabetes_ms_risk.service.RiskService;
 
+/**
+ * RestController is a class that handles HTTP Requests aimed at obtaining the Risk that a Patient develops Type-2 diabetes
+ */
 @RestController
 public class RiskController {
     @Autowired
@@ -21,6 +24,11 @@ public class RiskController {
     @Autowired
     MSNoteProxy noteProxy;
 
+    /**
+     * Calculates the risk a patient develops type-2 diabetes, using their age, gender and notes to determine it
+     * @param id id of the patient to handle
+     * @return an int (0-3); the Risk Level
+     */
     @GetMapping("/riskLevel/get/{id}")
     public int getRiskLevel(@PathVariable int id) {
         RiskPatientDTO riskPatient = riskService.createRiskPatientDTO(

@@ -3,6 +3,9 @@ package com.openclassrooms.mediLaboDiabetes_ms_patient.service;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import com.openclassrooms.mediLaboDiabetes_ms_patient.model.Patient;
@@ -22,6 +25,10 @@ public class PatientService {
      */
     public List<Patient> getPatients() {
         return patientRepo.findAll();
+    }
+
+    public Page<Patient> getPatientsPage(int pageNumber, int paitentPerPage) {
+        return patientRepo.findAll(PageRequest.of(pageNumber, paitentPerPage, Sort.by("lastName")));
     }
 
     /**

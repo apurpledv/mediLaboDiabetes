@@ -12,13 +12,13 @@ import org.springframework.web.bind.annotation.PostMapping;
 import com.openclassrooms.mediLaboDiabetes_clientui.beans.PatientBean;
 
 /**
- * MSPatientProxy is a class that sends HTTP requests to interact with MS-Patient
+ * MSPatientProxy is a class that sends HTTP requests to interact with
  */
 @FeignClient(name="mediLaboDiabetes-api-gateway", contextId="ms-patient")
 @RibbonClient(name="mediLaboDiabetes-ms-patient")
 public interface MSPatientProxy {
-    @GetMapping("/medilabodiabetes-ms-patient/patient/getAll")
-    List<PatientBean> getPatients();
+    @GetMapping("/medilabodiabetes-ms-patient/patient/getAll/{page}")
+    List<PatientBean> getPatients(@PathVariable("page") int page);
 
     @GetMapping("/medilabodiabetes-ms-patient/patient/get/{id}")
     PatientBean getPatient(@PathVariable int id);

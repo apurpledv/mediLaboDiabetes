@@ -39,10 +39,12 @@ public class PatientsController {
      * @param model
      * @return the "patients/patients-list" template
      */
-    @GetMapping("/patients")
-    public String patientsView(Model model) {
-        List<PatientBean> patientsList = patientProxy.getPatients();
+    @GetMapping("/patients/{page}")
+    public String patientsView(@PathVariable("page") int page, Model model) {
+        List<PatientBean> patientsList = patientProxy.getPatients(page);
         model.addAttribute("patientsList", patientsList);
+        model.addAttribute("prevPatPage", Math.max(0, page - 1));
+        model.addAttribute("nextPatPage", page + 1);
 
         return "patients/patients-list";
     }

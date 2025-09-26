@@ -25,6 +25,8 @@
                         <h2>Patients enregistrés</h2>
                         <a class="buttonStyle1" href="/patients/add">Nouveau patient</a>
                     </header>
+                    <a class="patientNav" th:href="@{/patients/{prevPatPage}(prevPatPage=${prevPatPage})}"><img th:src="@{/images/back.png}" alt="previous"></a>
+                    <a class="patientNav" th:href="@{/patients/{nextPatPage}(nextPatPage=${nextPatPage})}"><img th:src="@{/images/right.png}" alt="next"></a>
                     <table>
                         <thead>
                             <tr>

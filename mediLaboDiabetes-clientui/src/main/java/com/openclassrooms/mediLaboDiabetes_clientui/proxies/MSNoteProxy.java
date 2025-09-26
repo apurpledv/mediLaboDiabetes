@@ -12,6 +12,9 @@ import org.springframework.web.bind.annotation.PostMapping;
 import com.openclassrooms.mediLaboDiabetes_clientui.beans.NoteBean;
 import com.openclassrooms.mediLaboDiabetes_clientui.beans.NoteBeanDTO;
 
+/**
+ * MSNoteProxy is a class that sends HTTP requests to interact with MS-Notes
+ */
 @FeignClient(name="mediLaboDiabetes-api-gateway", contextId="ms-notes")
 @RibbonClient(name="mediLaboDiabetes-ms-notes")
 public interface MSNoteProxy {

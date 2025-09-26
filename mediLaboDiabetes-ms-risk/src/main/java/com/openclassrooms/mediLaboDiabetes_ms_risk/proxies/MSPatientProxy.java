@@ -7,6 +7,9 @@ import org.springframework.web.bind.annotation.PathVariable;
 
 import com.openclassrooms.mediLaboDiabetes_ms_risk.model.PatientBean;
 
+/**
+ * MSPatientProxy is a class that sends HTTP requests to MS-Patient to get a patient's data
+ */
 @FeignClient(name="mediLaboDiabetes-api-gateway", contextId="ms-patient2")
 @RibbonClient(name="mediLaboDiabetes-ms-patient")
 public interface MSPatientProxy {
